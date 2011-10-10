@@ -9,8 +9,8 @@ describe("Twitter", function() {
     
     it('should authenticate a user', function () {
         
-        var successCallback = jasmine.createSpy('success_a');
-        var failureCallback = jasmine.createSpy('failure_a');
+        var successCallback = jasmine.createSpy('success');
+        var failureCallback = jasmine.createSpy('failure');
         
         twitter.authenticate(successCallback, failureCallback);
         
@@ -29,27 +29,43 @@ describe("Twitter", function() {
     });
    
     it("should fetch the user's home timeline", function () {
-        var result;
-        var app = {
-            success: function (data) {
-                result = data;
-            },
-            failure: function (data) {
-                result = data;
-            }
-        };
-        spyOn(app, 'success').andCallThrough();
-        spyOn(app, 'failure').andCallThrough();
+        var successCallback = jasmine.createSpy('success');
+        var failureCallback = jasmine.createSpy('failure');
         
-        twitter.homeTimeline(null, app.success, app.failure);
+        twitter.homeTimeline(null, successCallback, failureCallback);
         
         waitsFor(function () {
-            return app.success.callCount > 0 || app.failure.callCount > 0;
+            return successCallback.callCount > 0 || failureCallback.callCount > 0;
         }, 60000);
         
         runs(function () {
-            expect(app.success).toHaveBeenCalled();
-            expect(app.failure).not.toHaveBeenCalled();
+            expect(successCallback).toHaveBeenCalled();
+            expect(failureCallback).not.toHaveBeenCalled();
+        });
+    });
+    
+    var tweets = [
+        "jsOAuth http://cl.ly/33eC is a javscript OAuth librabry. Testing the Twitter module",
+        "jsOAuth has a new Twitter module http://cl.ly/AhyH",
+        "Testing jsOAuth, ignore me for a while",
+        "http://cl.ly/AhyH http://cl.ly/33eC jsOAuth rawks"
+    ];
+    
+    var tweet = tweets[Math.floor(Math.random() * 4)];
+    
+    it("should tweet \"" + tweet + "\"", function () {
+        var successCallback = jasmine.createSpy('success');
+        var failureCallback = jasmine.createSpy('failure');
+        
+        twitter.tweet(tweet, successCallback, failureCallback);
+        
+        waitsFor(function () {
+            return successCallback.callCount > 0 || failureCallback.callCount > 0;
+        }, 10000);
+        
+        runs(function () {
+            expect(successCallback).toHaveBeenCalled();
+            expect(failureCallback).not.toHaveBeenCalled();
         });
     });
 });
