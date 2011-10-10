@@ -1,0 +1,6 @@
+tmp
+build
+.project
+.settings
+build.log
+Resources/env.js
